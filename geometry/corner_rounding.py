@@ -118,6 +118,8 @@ class RoundedCorner:
             or self.corner_radius < self.DISTANCE_EPSILON
         ):
             self.center = self.p1
+            # zero_seg = Cubic.straight_line(self.p1.x, self.p1.y, self.p1.x, self.p1.y)
+            # return [zero_seg, zero_seg, zero_seg]
             return [Cubic.straight_line(self.p1.x, self.p1.y, self.p1.x, self.p1.y)]
 
         # Arc tangent cut distance
@@ -160,6 +162,18 @@ class RoundedCorner:
             self.center,
             actual_r,
         ).reverse()
+
+        # if self.smoothing == 0:
+        #     # print("\n=\n=\n=\n=\n=\n=-\n=\n=\n=\n=\n=-=-\n=\=n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+        #     return [Cubic.circular_arc(
+        #         self.center.x,
+        #         self.center.y,
+        #         flanking0.p3.x,
+        #         flanking0.p3.y,
+        #         flanking2.p0.x,
+        #         flanking2.p0.y,
+        #         is_convex=self.is_convex,
+        #     ),]
 
         return [
             flanking0,

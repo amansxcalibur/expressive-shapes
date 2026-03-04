@@ -3,6 +3,7 @@ from typing import List
 from pprint import pprint
 from dataclasses import dataclass
 
+
 @dataclass
 class MorphPoint:
     progress: float
@@ -11,6 +12,7 @@ class MorphPoint:
 
     def to_tuple(self):
         return (self.x, self.y)
+
 
 class Morph:
     @staticmethod
@@ -30,8 +32,10 @@ class Morph:
     @staticmethod
     def create_progress_points(points):
         """Converts [(x,y)...] to [MorphPoint...] based on perimeter distance."""
-        distances = [Morph._dist(points[i], points[(i + 1) % len(points)]) 
-                     for i in range(len(points))]
+        distances = [
+            Morph._dist(points[i], points[(i + 1) % len(points)])
+            for i in range(len(points))
+        ]
         total_perimeter = sum(distances)
 
         progress_points = []
@@ -44,7 +48,9 @@ class Morph:
         return progress_points
 
     @staticmethod
-    def balance_morph_points(v1_mp: List[MorphPoint], target_count: int) -> List[MorphPoint]:
+    def balance_morph_points(
+        v1_mp: List[MorphPoint], target_count: int
+    ) -> List[MorphPoint]:
         """Adds points to v1 by splitting the longest edges until it matches target_count."""
         result = list(v1_mp)
 
@@ -57,7 +63,11 @@ class Morph:
                 p2 = result[(i + 1) % len(result)]
 
                 # Calculate progress gap (handling 1.0 -> 0.0 wrap-around)
-                gap = (p2.progress - p1.progress) if p2.progress > p1.progress else (1.0 - p1.progress + p2.progress)
+                gap = (
+                    (p2.progress - p1.progress)
+                    if p2.progress > p1.progress
+                    else (1.0 - p1.progress + p2.progress)
+                )
 
                 if gap > max_gap:
                     max_gap = gap
@@ -79,26 +89,26 @@ class Morph:
     def map_vertices_1_to_1(v1_mp, v2_mp):
         """Finds the rotation of v2 that minimizes the distance to v1[0]."""
         best_start_idx = 0
-        min_dist = float('inf')
-        
+        min_dist = float("inf")
+
         # determine the "least twisted" starting point
         for shift in range(len(v2_mp)):
             d = Morph._dist(v1_mp[0].to_tuple(), v2_mp[shift].to_tuple())
             if d < min_dist:
                 min_dist = d
                 best_start_idx = shift
-                
+
         mapping = []
         for i in range(len(v1_mp)):
             target_idx = (i + best_start_idx) % len(v2_mp)
             mapping.append((v1_mp[i], v2_mp[target_idx]))
-            
+
         return mapping
 
     @staticmethod
     def map_vertices(v1: list, v2: list):
-        print("\n" + "="*30)
-        
+        print("\n" + "=" * 30)
+
         # align winding
         if Morph.get_winding_order(v1) != Morph.get_winding_order(v2):
             v2 = v2[::-1]
@@ -131,21 +141,20 @@ class Morph:
         mapped_v1 = [p1.to_tuple() for p1, p2 in mapping]
         mapped_v2 = [p2.to_tuple() for p1, p2 in mapping]
 
-        print("="*30 + "\n")
+        print("=" * 30 + "\n")
         return (mapped_v2, mapped_v1) if swapped else (mapped_v1, mapped_v2)
 
     @staticmethod
-    def get_interpolated(v1, v2, alpha):    
+    def get_interpolated(v1, v2, alpha):
         morphed = [
-            (p1[0] + (p2[0] - p1[0]) * alpha, 
-             p1[1] + (p2[1] - p1[1]) * alpha)
+            (p1[0] + (p2[0] - p1[0]) * alpha, p1[1] + (p2[1] - p1[1]) * alpha)
             for p1, p2 in zip(v1, v2)
         ]
         print(f"\n=== alpha: {alpha} ===")
         pprint(morphed)
         return morphed
 
-        # so the old algo goes like this. 
+        # so the old algo goes like this.
         # triangle ->square
         # cycle 1
         # 0->0
@@ -181,7 +190,7 @@ class Morph:
         #     candidates = []
         #     # cycle 2
         #     search_area = v2_mp[v2_map_limit:]
-            
+
         #     for offset, point_v2 in enumerate(search_area):
         #         dist = Morph._dist(vertex_1, point_v2.to_tuple())
         #         # Store (distance, point, original_index)
@@ -190,12 +199,12 @@ class Morph:
         #     if candidates:
         #         # Find the closest point
         #         best_match = min(candidates, key=lambda x: x[0])
-                
+
         #         min_dist_point = best_match[1]
         #         chosen_index = best_match[2] # This is the index in v2_mp
-                
+
         #         mapping.append((point_v1, min_dist_point))
-                
+
         #         # Update the limit to the next index so we don't look back
         #         v2_map_limit = chosen_index + 1
 
@@ -217,8 +226,7 @@ class Morph:
 
         #     print()
         #     pprint(pair)
-        #     if prev.progress>next.progress:    
+        #     if prev.progress>next.progress:
         #         print("==bad==")
         #     else:
         #         print("==good==")
-

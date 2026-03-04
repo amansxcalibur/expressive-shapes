@@ -1,8 +1,8 @@
 from fabric import Application
-from fabric.widgets.x11 import X11Window as Window
-from fabric.widgets.label import Label
 from fabric.widgets.box import Box
-from shapes import Square, Triangle, ShapeMorph
+from fabric.widgets.x11 import X11Window as Window
+
+from shapes import Square, Triangle, ShapeMorph, BezierShapeMorph, AnimateShapeMorph
 
 from fabric.utils import get_relative_path, monitor_file
 
@@ -22,7 +22,12 @@ class Pill(Window):
             name="container",
             h_expand=True,
             v_expand=True,
-            children=[Square(), Triangle(), ShapeMorph(), Label(label="helllooo")],
+            children=[
+                Square(),
+                Triangle(),
+                # BezierShapeMorph(),
+                AnimateShapeMorph(),
+            ],
         )
 
 

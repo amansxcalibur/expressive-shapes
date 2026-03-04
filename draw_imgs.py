@@ -1,4 +1,3 @@
-import os
 import math
 import cairo
 from pathlib import Path
@@ -15,6 +14,9 @@ from shapes.shape_presets import (
     cookie_12,
     cookie_8,
     fan,
+    apple,
+    t_apple,
+    t_fan
 )
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -101,3 +103,6 @@ if __name__ == "__main__":
     draw_material_shape(cookie_12, "cookie_12.png")
     draw_material_shape(cookie_8, "cookie_8.png")
     draw_material_shape(fan, "fan.png")
+    draw_material_shape(apple, "apple.png")
+    draw_material_shape(t_fan, "t_fan.png")
+    draw_material_shape(t_apple, "t_apple.png")

@@ -2,6 +2,7 @@ import cairo
 from typing import Tuple
 
 import gi
+
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
@@ -18,7 +19,12 @@ class Square(Gtk.DrawingArea):
         self.dark = dark
         self._override_color = override_color or (0.2, 0.4, 0.9)
 
-        self.path = [(0.1, 0.1),(0.9, 0.1),(0.9, 0.9),(0.1, 0.9),]
+        self.path = [
+            (0.1, 0.1),
+            (0.9, 0.1),
+            (0.9, 0.9),
+            (0.1, 0.9),
+        ]
         self.connect("draw", self.on_draw)
         self.show()
 

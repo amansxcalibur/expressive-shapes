@@ -29,6 +29,12 @@ class Point:
     def get_distance(self):
         return math.hypot(self.x, self.y)
 
+    def get_distance_squared(self):
+        return self.x * self.x + self.y * self.y
+
+    def dist_to(self, other):
+        return math.hypot((self.x - other.x), (self.y - other.y))
+
     def rotate_90(self):
         return Point(-self.y, self.x)
 
@@ -46,20 +52,19 @@ class Point:
 
 @dataclass
 class Cubic:
-    p0: Point  # Start point (on the curve).
-    p1: Point  # First control point (off the curve; determines exit tangent at p0).
-    p2: Point  # Second control point (off the curve; determines entry tangent at p3).
-    p3: Point  # End point (on the curve).
+    p0: Point  # start anchor point
+    p1: Point  # first control point
+    p2: Point  # second control point
+    p3: Point  # end anchor point
 
     def reverse(self) -> "Cubic":
-        # Reverse the order of points to flip the direction of the curve
         return Cubic(p0=self.p3, p1=self.p2, p2=self.p1, p3=self.p0)
 
     @staticmethod
     def straight_line(x0, y0, x1, y1):
         p0 = Point(x0, y0)
         p3 = Point(x1, y1)
-        # Control points are same as endpoints for a straight line
+        # control points are same as endpoints for a straight line
         return Cubic(p0, p0, p3, p3)
 
     @staticmethod
@@ -109,7 +114,7 @@ class Cubic:
         angle = math.acos(max(-1.0, min(1.0, dot)))
 
         # Kappa: optimal handle length for the cubic arc approximation.
-        # Calculate the handles distance (Kappa)
+        # Calculate the handles distance (kappa)
         kappa = (4.0 / 3.0) * math.tan(angle / 4.0)
 
         # Place control points tangent to the circle at each endpoint.
@@ -124,3 +129,43 @@ class Cubic:
             p1 = p0 + v0.rotate_270() * kappa
             p2 = p3 + v3.rotate_270() * -kappa
         return Cubic(p0, p1, p2, p3)
+
+    def split(self, t: float) -> tuple["Cubic", "Cubic"]:
+        """
+        Splits the cubic Bezier curve at parameter t into two cubic Bezier curves.
+        Uses De Casteljau's algorithm to calculate the new control points.
+        """
+        # Level 1: Interpolate between the 4 original points
+        p01 = Point.interpolate(self.p0, self.p1, t)
+        p12 = Point.interpolate(self.p1, self.p2, t)
+        p23 = Point.interpolate(self.p2, self.p3, t)
+
+        # Level 2: Interpolate between the 3 points from Level 1
+        p012 = Point.interpolate(p01, p12, t)
+        p123 = Point.interpolate(p12, p23, t)
+
+        # Level 3: The point on the curve at time t
+        p0123 = Point.interpolate(p012, p123, t)
+
+        left = Cubic(p0=self.p0, p1=p01, p2=p012, p3=p0123)
+
+        right = Cubic(p0=p0123, p1=p123, p2=p23, p3=self.p3)
+
+        return left, right
+
+    def point_at(self, t: float) -> Point:
+        """Returns the Point on the curve at parameter t (0 to 1)."""
+        u = 1 - t
+        tt = t * t
+        uu = u * u
+        uuu = uu * u
+        ttt = tt * t
+
+        # Cubic Bezier formula: (1-t)^3*P0 + 3(1-t)^2*t*P1 + 3(1-t)*t^2*P2 + t^3*P3
+        p = (
+            (self.p0 * uuu)
+            + (self.p1 * 3 * uu * t)
+            + (self.p2 * 3 * u * tt)
+            + (self.p3 * ttt)
+        )
+        return p

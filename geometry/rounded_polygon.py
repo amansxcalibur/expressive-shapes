@@ -15,6 +15,12 @@ class Feature:
     type: str  # "corner" or "edge"
     is_convex: bool = True
 
+    # to make it hashable for set()
+    def __hash__(self):
+        return id(self)
+
+    def __eq__(self, other):
+        return self is other
 
 class RoundedPolygon:
     def __init__(self, features: List[Feature], center_x: float, center_y: float):
@@ -61,8 +67,10 @@ class RoundedPolygon:
             )
             rounded_corners.append(corner)
 
+        print("--- rounded corners ---")
         for i in rounded_corners:
             pprint([i.p0, i.p1, i.p2, i.rounding])
+        print()
 
         # --- Resolve overlapping cuts (tight-space adjustment) ---
         # For each edge, check whether the two flanking corners claim more
@@ -101,6 +109,7 @@ class RoundedPolygon:
 
         print("----- cut adjusts -----")
         pprint(cut_adjusts)
+        print()
 
         # --- Generate Final Features ---
         # Generate a corner feature paired with a straight edge on each vertex
@@ -166,6 +175,7 @@ class RoundedPolygon:
 
         print("----features-----")
         pprint(features)
+        print()
 
         if center_x is None or center_y is None:
             center_x, center_y = cls._calculate_center(vertices)
@@ -174,7 +184,7 @@ class RoundedPolygon:
 
     @staticmethod
     def _is_clockwise(vertices: List[float]) -> bool:
-        """Determines if polygon winding is clockwise using Shoelace formula."""
+        # uses Shoelace formula
         area = 0.0
         n = len(vertices) // 2
         for i in range(n):
@@ -191,3 +201,6 @@ class RoundedPolygon:
 
     def get_all_curves(self) -> List[Cubic]:
         return [curve for f in self.features for curve in f.curves]
+
+    def get_all_features(self) -> List[Feature]:
+        return self.features
