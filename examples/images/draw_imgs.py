@@ -2,8 +2,8 @@ import math
 import cairo
 from pathlib import Path
 
-from geometry.rounded_polygon import RoundedPolygon
-from shapes.shape_presets import (
+from expressive_shapes.geometry.rounded_polygon import RoundedPolygon
+from expressive_shapes.shapes.shape_presets import (
     star,
     clover_flower,
     organic_blob,
@@ -16,7 +16,7 @@ from shapes.shape_presets import (
     fan,
     apple,
     t_apple,
-    t_fan
+    t_fan,
 )
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -48,10 +48,10 @@ def draw_material_shape(unit_data, filename="shape.png", size=1000, margin=0):
             ctx.curve_to(c.p1.x, c.p1.y, c.p2.x, c.p2.y, c.p3.x, c.p3.y)
         ctx.close_path()
 
-    ctx.set_source_rgb(1.0, 1.0, 1.0)  # Dark Surface
+    ctx.set_source_rgb(1.0, 1.0, 1.0)
     # ctx.fill_preserve()
     ctx.set_line_width(1)
-    # ctx.set_source_rgb(0.3, 0.3, 0.3)  # Subtle Stroke
+    # ctx.set_source_rgb(0.3, 0.3, 0.3)
     ctx.stroke()
 
     # --- debug dots ---

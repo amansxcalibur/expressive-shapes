@@ -1,9 +1,19 @@
-from geometry.polygon_measure import MeasuredPolygon
+from __future__ import annotations
+
+from ..geometry.polygon_measure import MeasuredPolygon
+
+
+def _debug_enabled() -> bool:
+    import expressive_shapes
+
+    return expressive_shapes.DEBUG
 
 
 class MorphDebugger:
     @staticmethod
     def inspect_all(poly1, poly2):
+        if not _debug_enabled():
+            return
         print(f"\n{'=' * 24} MORPH INSPECTION {'=' * 24}")
         m1 = MeasuredPolygon.measure_polygon(poly1)
         m2 = MeasuredPolygon.measure_polygon(poly2)
@@ -13,6 +23,8 @@ class MorphDebugger:
 
     @staticmethod
     def print_mapping_results(measured_poly1, measured_poly2, mapping_pairs):
+        if not _debug_enabled():
+            return
         print("\n[ FEATURE ALIGNMENT MAP ]")
         print(
             f"{'Src Idx':<8} | {'Tgt Idx':<8} | {'Src Progress':<12} | {'Tgt Progress':<12}"
@@ -33,8 +45,10 @@ class MorphDebugger:
 
     @staticmethod
     def print_distance_matrix(features1, features2):
+        if not _debug_enabled():
+            return
         # avoid circular dependency
-        from morph.bezier_morph import Morph
+        from .bezier_morph import Morph
 
         print("\n[ GEOMETRIC DISTANCE MATRIX (Squared) ]")
         header = "       " + "".join([f"T{i:<8}" for i in range(len(features2))])
@@ -46,20 +60,24 @@ class MorphDebugger:
             for f2 in features2:
                 dist = Morph.feature_dist_squared(f1, f2)
                 if dist == float("inf"):
-                    row += f"{'∞':<9}"
+                    row += f"{'inf':<9}"
                 else:
                     row += f"{dist:<9.3f}"
             print(row)
 
     @staticmethod
     def print_walking_header():
+        if not _debug_enabled():
+            return
         print("\n[ MORPH GENERATION: WALKING THE PATH ]")
         print(f"{'Step':<5} | {'P1 End':<10} | {'P2 (Mapped)':<12} | {'Action'}")
         print("-" * 55)
 
     @staticmethod
     def print_poly_summary(label, measured_poly):
-        from morph.bezier_morph import Morph  # Avoid circular import
+        if not _debug_enabled():
+            return
+        from .bezier_morph import Morph  # Avoid circular import
 
         print(f"\n--- {label} ---")
         print(
@@ -84,7 +102,9 @@ class MorphDebugger:
 
     @staticmethod
     def print_mapping_decisions(distance_vertex_list, final_mapping):
-        from morph.bezier_morph import Morph
+        if not _debug_enabled():
+            return
+        from .bezier_morph import Morph
 
         print("\n[ MAPPING DECISION LOG ]")
         print(
@@ -97,32 +117,29 @@ class MorphDebugger:
         for dv in distance_vertex_list:
             pair = (dv.f1.progress, dv.f2.progress)
 
-            # ensure dv.f1 and dv.f2 have an 'index' attribute
-            # or look them up as shown in the first example.
             s_idx = getattr(dv.f1, "index", "?")
             t_idx = getattr(dv.f2, "index", "?")
 
             p1 = Morph.feature_representative_point(dv.f1.feature)
             p2 = Morph.feature_representative_point(dv.f2.feature)
 
-            status = "✅" if pair in final_set else "❌"
+            status = "[Y]" if pair in final_set else "[N]"
             print(
                 f"{s_idx:<5} | {t_idx:<5} | ({p1.x:>5.1f},{p1.y:>5.1f}) | ({p2.x:>5.1f},{p2.y:>5.1f}) | {status}"
             )
 
     @staticmethod
     def print_final_matched_pairs(matched_pairs):
+        if not _debug_enabled():
+            return
         print("\n[ FINAL MATCHED SEGMENT LIST ]")
         print(f"{'Pair':<5} | {'Source Start':<18} | {'Target Start':<18} | {'Type'}")
         print("-" * 65)
 
         for i, (c1, c2) in enumerate(matched_pairs):
-            # Taking the start point (p0) of each cubic segment
             p1 = c1.p0
             p2 = c2.p0
 
-            # Identify if it's a straight line (approximated) or curve
-            # (This assumes your Cubic object has a way to check linearity)
             is_line = "Line" if (getattr(c1, "is_linear", False)) else "Curve"
 
             s_coord = f"({p1.x:>5.1f}, {p1.y:>5.1f})"

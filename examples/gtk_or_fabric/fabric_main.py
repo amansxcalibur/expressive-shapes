@@ -2,9 +2,7 @@ from fabric import Application
 from fabric.widgets.box import Box
 from fabric.widgets.x11 import X11Window as Window
 
-from shapes import Square, Triangle, ShapeMorph, BezierShapeMorph, AnimateShapeMorph
-
-from fabric.utils import get_relative_path, monitor_file
+from bezier_morph_shape import AnimateShapeMorph
 
 
 class Pill(Window):
@@ -23,8 +21,6 @@ class Pill(Window):
             h_expand=True,
             v_expand=True,
             children=[
-                Square(),
-                Triangle(),
                 # BezierShapeMorph(),
                 AnimateShapeMorph(),
             ],
@@ -40,14 +36,4 @@ if __name__ == "__main__":
     }
 
     app = Application("cairo-shapes", **app_kwargs)
-
-    def set_css(*args):
-        app.set_stylesheet_from_file(
-            get_relative_path("./main.css"),
-        )
-
-    app.style_monitor = monitor_file(get_relative_path("./main.css"))
-    app.style_monitor.connect("changed", set_css)
-    set_css()
-
     app.run()

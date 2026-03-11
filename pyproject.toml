@@ -1,0 +1,46 @@
+[build-system]
+requires = ["uv_build >= 0.10.7, <0.11.0"]
+build-backend = "uv_build"
+
+[project]
+name = "expressive-shapes"
+version = "0.1.2"
+authors = [
+  { name="Aman Valiyakath", email="notifyamanvs@gmail.com" },
+]
+description = "Expressive shape morphing and animations"
+readme = "README.md"
+requires-python = ">=3.9"
+keywords = [
+    "geometry",
+    "bezier",
+    "polygon",
+    "morph",
+    "shape",
+    "rounded-polygon",
+    "material-design",
+    "cairo",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Typing :: Typed",
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+license = "GPL-3.0"
+license-files = ["LICENSE"]
+
+[project.urls]
+Homepage = "https://github.com/amansxcalibur/expressive-shapes"
+Source = "https://github.com/amansxcalibur/expressive-shapes"
+Changelog = "https://github.com/amansxcalibur/expressive-shapes/blob/main/CHANGELOG.md"
+Issues = "https://github.com/amansxcalibur/expressive-shapes/issues"

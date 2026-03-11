@@ -1,4 +1,4 @@
-from geometry.corner_rounding import CornerRounding
+from ..geometry.corner_rounding import CornerRounding
 
 # --- PRESET STYLES ---
 SHARP = CornerRounding(radius=0.0, smoothing=0.0)
@@ -331,28 +331,34 @@ heart = [
 pixel_triangle = [
     # --- Start at Top-Back ---
     ((0.20, 0.10), SHARP),
-    
     # --- 5 Steps Up/Forward ---
-    ((0.32, 0.10), SHARP), ((0.32, 0.18), SHARP), # Step 1
-    ((0.44, 0.18), SHARP), ((0.44, 0.26), SHARP), # Step 2
-    ((0.56, 0.26), SHARP), ((0.56, 0.34), SHARP), # Step 3
-    ((0.68, 0.34), SHARP), ((0.68, 0.42), SHARP), # Step 4
-    ((0.80, 0.42), SHARP), ((0.80, 0.50), SHARP), # Step 5 (Entering Tip)
-
+    ((0.32, 0.10), SHARP),
+    ((0.32, 0.18), SHARP),  # Step 1
+    ((0.44, 0.18), SHARP),
+    ((0.44, 0.26), SHARP),  # Step 2
+    ((0.56, 0.26), SHARP),
+    ((0.56, 0.34), SHARP),  # Step 3
+    ((0.68, 0.34), SHARP),
+    ((0.68, 0.42), SHARP),  # Step 4
+    ((0.80, 0.42), SHARP),
+    ((0.80, 0.50), SHARP),  # Step 5 (Entering Tip)
     # --- Single Step Tip (The Nose) ---
-    ((0.92, 0.50), SHARP), 
-    ((0.92, 0.58), SHARP), # Height is 0.08, same as steps
-
+    ((0.92, 0.50), SHARP),
+    ((0.92, 0.58), SHARP),  # Height is 0.08, same as steps
     # --- 5 Steps Down/Back ---
-    ((0.80, 0.58), SHARP), ((0.80, 0.66), SHARP), # Step 5 Down
-    ((0.68, 0.66), SHARP), ((0.68, 0.74), SHARP), # Step 4 Down
-    ((0.56, 0.74), SHARP), ((0.56, 0.82), SHARP), # Step 3 Down
-    ((0.44, 0.82), SHARP), ((0.44, 0.90), SHARP), # Step 2 Down
-    ((0.32, 0.90), SHARP), ((0.32, 0.98), SHARP), # Step 1 Down
-    
+    ((0.80, 0.58), SHARP),
+    ((0.80, 0.66), SHARP),  # Step 5 Down
+    ((0.68, 0.66), SHARP),
+    ((0.68, 0.74), SHARP),  # Step 4 Down
+    ((0.56, 0.74), SHARP),
+    ((0.56, 0.82), SHARP),  # Step 3 Down
+    ((0.44, 0.82), SHARP),
+    ((0.44, 0.90), SHARP),  # Step 2 Down
+    ((0.32, 0.90), SHARP),
+    ((0.32, 0.98), SHARP),  # Step 1 Down
     # --- Back Edge ---
     ((0.20, 0.98), SHARP),
-    ((0.20, 0.50), SHARP), # Mid-back pivot
+    ((0.20, 0.50), SHARP),  # Mid-back pivot
 ]
 
 pixel_circle = [
@@ -417,34 +423,27 @@ boom = [
 
 puffy_diamond = [
     # --- Top Group ---
-    ((0.500, 0.050), VERY_ROUND), # 0° (Top Peak)
-    ((0.565, 0.330), SHARP),      # 18° (The "Pinch")
-    
+    ((0.500, 0.050), VERY_ROUND),  # 0° (Top Peak)
+    ((0.565, 0.330), SHARP),  # 18° (The "Pinch")
     # --- Top-Right ---
-    ((0.780, 0.220), VERY_ROUND), # 45°
-    ((0.670, 0.435), SHARP),      # 72° (The "Pinch")
-    
+    ((0.780, 0.220), VERY_ROUND),  # 45°
+    ((0.670, 0.435), SHARP),  # 72° (The "Pinch")
     # --- Right Group ---
-    ((0.950, 0.500), VERY_ROUND), # 90° (Right Peak)
-    ((0.670, 0.565), SHARP),      # 108°
-    
+    ((0.950, 0.500), VERY_ROUND),  # 90° (Right Peak)
+    ((0.670, 0.565), SHARP),  # 108°
     # --- Bottom-Right ---
-    ((0.780, 0.780), VERY_ROUND), # 135°
-    ((0.565, 0.670), SHARP),      # 162°
-    
+    ((0.780, 0.780), VERY_ROUND),  # 135°
+    ((0.565, 0.670), SHARP),  # 162°
     # --- Bottom Group ---
-    ((0.500, 0.950), VERY_ROUND), # 180° (Bottom Peak)
-    ((0.435, 0.670), SHARP),      # 198°
-    
+    ((0.500, 0.950), VERY_ROUND),  # 180° (Bottom Peak)
+    ((0.435, 0.670), SHARP),  # 198°
     # --- Bottom-Left ---
-    ((0.220, 0.780), VERY_ROUND), # 225°
-    ((0.330, 0.565), SHARP),      # 252°
-    
+    ((0.220, 0.780), VERY_ROUND),  # 225°
+    ((0.330, 0.565), SHARP),  # 252°
     # --- Left Group ---
-    ((0.050, 0.500), VERY_ROUND), # 270° (Left Peak)
-    ((0.330, 0.435), SHARP),      # 288°
-    
+    ((0.050, 0.500), VERY_ROUND),  # 270° (Left Peak)
+    ((0.330, 0.435), SHARP),  # 288°
     # --- Top-Left ---
-    ((0.220, 0.220), VERY_ROUND), # 315°
-    ((0.435, 0.330), SHARP),      # 342°
+    ((0.220, 0.220), VERY_ROUND),  # 315°
+    ((0.435, 0.330), SHARP),  # 342°
 ]

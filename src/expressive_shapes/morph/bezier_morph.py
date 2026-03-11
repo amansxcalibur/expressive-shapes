@@ -1,12 +1,12 @@
 from pprint import pprint
-from typing import List, Tuple
 from bisect import bisect_left
 from dataclasses import dataclass
+import warnings
 
-from .debugger import MorphDebugger
-from geometry.bezier_geometry import Cubic, Point
-from geometry.rounded_polygon import RoundedPolygon, Feature
-from geometry.polygon_measure import (
+from .debugger import MorphDebugger, _debug_enabled
+from ..geometry.bezier_geometry import Cubic, Point
+from ..geometry.rounded_polygon import RoundedPolygon, Feature
+from ..geometry.polygon_measure import (
     AngleEpsilon,
     DistanceEpsilon,
     DoubleMapper,
@@ -31,14 +31,15 @@ class DistanceVertex:
 
 class Morph:
     @staticmethod
-    def balance_segments(curves: List[Cubic], target_count: int) -> List[Cubic]:
+    def balance_segments(curves: list[Cubic], target_count: int) -> list[Cubic]:
         result = curves
 
         if not result:
             result = list(curves)
 
-        print("splitting, length and target:", len(result), target_count)
-        pprint(result)
+        if _debug_enabled():
+            print("splitting, length and target:", len(result), target_count)
+            pprint(result)
 
         # repeatedly find the longest cubic and split
         while len(result) < target_count:
@@ -49,7 +50,8 @@ class Morph:
                 if score > max_score:
                     max_score = score
                     idx_to_split = i
-                    print("==splitting index : ", idx_to_split, score)
+                    if _debug_enabled():
+                        print("==splitting index : ", idx_to_split, score)
 
             c1, c2 = result[idx_to_split].split(0.5)
             result[idx_to_split] = c1
@@ -59,14 +61,18 @@ class Morph:
     @staticmethod
     def map_curves(
         poly_start: RoundedPolygon, poly_end: RoundedPolygon
-    ) -> Tuple[List[Cubic], List[Cubic]]:
+    ) -> tuple[list[Cubic], list[Cubic]]:
         curves_a = poly_start.get_all_curves()
         curves_b = poly_end.get_all_curves()
 
         target_count = max(len(curves_a), len(curves_b))
-        print(
-            " -- getting target count -- ", target_count, len(curves_a), len(curves_b)
-        )
+        if _debug_enabled():
+            print(
+                " -- getting target count -- ",
+                target_count,
+                len(curves_a),
+                len(curves_b),
+            )
 
         # filter out degenerate cubics
         result_a = [c for c in curves_a if c.p0.dist_to(c.p3) > 0.001]
@@ -74,12 +80,13 @@ class Morph:
 
         target_count = max(len(result_a), len(result_b))
 
-        print(
-            " -- getting filtered target count -- ",
-            target_count,
-            len(result_a),
-            len(result_b),
-        )
+        if _debug_enabled():
+            print(
+                " -- getting filtered target count -- ",
+                target_count,
+                len(result_a),
+                len(result_b),
+            )
 
         balanced_a = Morph.balance_segments(result_a, target_count)
         balanced_b = Morph.balance_segments(result_b, target_count)
@@ -99,8 +106,8 @@ class Morph:
 
     @staticmethod
     def interpolate(
-        curves_a: List[Cubic], curves_b: List[Cubic], alpha: float
-    ) -> List[Cubic]:
+        curves_a: list[Cubic], curves_b: list[Cubic], alpha: float
+    ) -> list[Cubic]:
         morphed = []
         for c1, c2 in zip(curves_a, curves_b):
             p0 = Point.interpolate(c1.p0, c2.p0, alpha)
@@ -117,39 +124,43 @@ class Morph:
         _, feats_a = measure_features(poly_start.features)
         _, feats_b = measure_features(poly_end.features)
 
-        print("all feats : ", len(poly_start.features))
-        corners_a: List[MeasuredFeature] = [
+        if _debug_enabled():
+            print("all feats : ", len(poly_start.features))
+        corners_a: list[MeasuredFeature] = [
             c for c in feats_a if c.feature.type == "corner"
         ]
-        corners_b: List[MeasuredFeature] = [
+        corners_b: list[MeasuredFeature] = [
             c for c in feats_b if c.feature.type == "corner"
         ]
-        print("all corners : ", len(corners_a))
+        if _debug_enabled():
+            print("all corners : ", len(corners_a))
 
         feature_progress_mapping = Morph.do_mapping(corners_a, corners_b)
 
-        print(
-            " | ".join(
-                f"{src:.4f} -> {dst:.4f}" for src, dst in feature_progress_mapping
+        if _debug_enabled():
+            print(
+                " | ".join(
+                    f"{src:.4f} -> {dst:.4f}" for src, dst in feature_progress_mapping
+                )
             )
-        )
 
         dm = DoubleMapper(*feature_progress_mapping)
 
-        N = 10
-        map_values = [f"{dm.map(i / N):.4f}" for i in range(N + 1)]
-        map_back_values = [f"{dm.map_back(i / N):.4f}" for i in range(N + 1)]
+        if _debug_enabled():
+            N = 10
+            map_values = [f"{dm.map(i / N):.4f}" for i in range(N + 1)]
+            map_back_values = [f"{dm.map_back(i / N):.4f}" for i in range(N + 1)]
 
-        print("Map :", " | ".join(map_values))
-        print("Mb  :", " | ".join(map_back_values))
+            print("Map :", " | ".join(map_values))
+            print("Mb  :", " | ".join(map_back_values))
 
         return dm
 
     @staticmethod
     def do_mapping(
-        features1: List[MeasuredFeature],
-        features2: List[MeasuredFeature],
-    ) -> List[Tuple[float, float]]:
+        features1: list[MeasuredFeature],
+        features2: list[MeasuredFeature],
+    ) -> list[tuple[float, float]]:
         """
         Builds a list of (progress1, progress2) anchor pairs by greedily matching
         corner features from both shapes based on spatial proximity.
@@ -157,7 +168,7 @@ class Morph:
 
         MorphDebugger.print_distance_matrix(features1, features2)
 
-        distance_vertex_list: List[DistanceVertex] = []
+        distance_vertex_list: list[DistanceVertex] = []
 
         for f1 in features1:
             for f2 in features2:
@@ -209,7 +220,7 @@ class Morph:
     @staticmethod
     def match(
         poly1: RoundedPolygon, poly2: RoundedPolygon
-    ) -> List[Tuple[Cubic, Cubic]]:
+    ) -> list[tuple[Cubic, Cubic]]:
         MorphDebugger.inspect_all(poly1, poly2)
 
         measured1: MeasuredPolygon = MeasuredPolygon.measure_polygon(poly1)
@@ -227,7 +238,7 @@ class Morph:
                 f.index = i
                 corners2.append(f)
 
-        mapping_pairs: List[Tuple[float, float]] = Morph.do_mapping(corners1, corners2)
+        mapping_pairs: list[tuple[float, float]] = Morph.do_mapping(corners1, corners2)
         MorphDebugger.print_mapping_results(measured1, measured2, mapping_pairs)
 
         double_mapper = DoubleMapper(*mapping_pairs)
@@ -235,16 +246,20 @@ class Morph:
         # Determine where Shape 2 should "start" to align with Shape 1's 0.0
         poly2_cut_point = double_mapper.map(0.0)
 
-        print("\n[ ALIGNMENT ]")
-        print(f"Shape 2 cut point: {poly2_cut_point:.4f} (mapping of 0.0 on Shape 1)")
+        if _debug_enabled():
+            print("\n[ ALIGNMENT ]")
+            print(
+                f"Shape 2 cut point: {poly2_cut_point:.4f} (mapping of 0.0 on Shape 1)"
+            )
 
         # Cut and shift Shape 2 so its index 0 aligns with Shape 1's index 0
         bs1: MeasuredPolygon = measured1
         bs2: MeasuredPolygon = measured2.cut_and_shift(poly2_cut_point)
 
-        print(
-            f"After cut_and_shift: bs1 has {len(bs1)} cubics, bs2 has {len(bs2)} cubics"
-        )
+        if _debug_enabled():
+            print(
+                f"After cut_and_shift: bs1 has {len(bs1)} cubics, bs2 has {len(bs2)} cubics"
+            )
 
         # Walks both polygons simultaneously, producing matched (Cubic, Cubic) pairs.
         # Whichever cubic ends sooner is consumed whole; the other is cut at the
@@ -275,7 +290,10 @@ class Morph:
             # smaller cubics determines split boundary
             min_b = min(b1a, b2a)
 
-            print(f"{step:<5} | b1a={b1a:<10.4f} | b2a={b2a:<12.4f} | min={min_b:.4f}")
+            if _debug_enabled():
+                print(
+                    f"{step:<5} | b1a={b1a:<10.4f} | b2a={b2a:<12.4f} | min={min_b:.4f}"
+                )
 
             # cut whichever extends past min_b
             if b1a > min_b + AngleEpsilon:
@@ -302,10 +320,11 @@ class Morph:
             step += 1
 
         if b1 is not None or b2 is not None:
-            print(
-                f"WARNING: Walking ended with b1={b1 is not None}, b2={b2 is not None}"
+            warnings.warn(
+                f"Walking ended with b1={b1 is not None}, b2={b2 is not None}, "
+                f"i1={i1}/{bs1.size}, i2={i2}/{bs2.size}",
+                stacklevel=2,
             )
-            print(f"  i1={i1}/{bs1.size}, i2={i2}/{bs2.size}")
 
         MorphDebugger.print_final_matched_pairs(ret)
 
@@ -313,8 +332,8 @@ class Morph:
 
     @staticmethod
     def as_cubics(
-        matched_pairs: List[Tuple[Cubic, Cubic]], progress: float
-    ) -> List[Cubic]:
+        matched_pairs: list[tuple[Cubic, Cubic]], progress: float
+    ) -> list[Cubic]:
         result = []
         first_cubic = None
         last_cubic = None

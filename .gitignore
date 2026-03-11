@@ -11,3 +11,12 @@ __pycache__/
 
 # Generated PNGs and SVGs
 outputs/
+
+# Build
+dist/
+build/
+*.egg-info/
+
+# Type Checking
+.mypy_cache/
+.pytype/

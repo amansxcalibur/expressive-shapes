@@ -1,9 +1,9 @@
 import cairo
 import threading
 
-from morph.bezier_morph import Morph
-from geometry.rounded_polygon import RoundedPolygon
-from .shape_presets import (
+from expressive_shapes.morph.bezier_morph import Morph
+from expressive_shapes.geometry.rounded_polygon import RoundedPolygon
+from expressive_shapes.shapes.shape_presets import (
     star,
     clover_flower,
     organic_blob,

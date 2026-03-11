@@ -1,6 +1,5 @@
 import math
 from dataclasses import dataclass
-from typing import List, Optional
 
 from .bezier_geometry import Point, Cubic
 
@@ -56,7 +55,7 @@ class RoundedCorner:
         p0: Point,
         p1: Point,
         p2: Point,
-        rounding: Optional[CornerRounding] = None,
+        rounding: CornerRounding | None = None,
         clockwise_winding: bool = True,
     ):
         self.p0, self.p1, self.p2 = p0, p1, p2
@@ -105,7 +104,7 @@ class RoundedCorner:
         """Total cut distance from the corner tip, including the smoothing extension."""
         return (1 + self.smoothing) * self.expected_round_cut
 
-    def get_cubics(self, allowed_cut_0: float, allowed_cut_1: float) -> List[Cubic]:
+    def get_cubics(self, allowed_cut_0: float, allowed_cut_1: float) -> list[Cubic]:
         """Generate the three cubic Bezier curves that form this rounded corner."""
 
         # for symmetry
@@ -162,18 +161,6 @@ class RoundedCorner:
             self.center,
             actual_r,
         ).reverse()
-
-        # if self.smoothing == 0:
-        #     # print("\n=\n=\n=\n=\n=\n=-\n=\n=\n=\n=\n=-=-\n=\=n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-        #     return [Cubic.circular_arc(
-        #         self.center.x,
-        #         self.center.y,
-        #         flanking0.p3.x,
-        #         flanking0.p3.y,
-        #         flanking2.p0.x,
-        #         flanking2.p0.y,
-        #         is_convex=self.is_convex,
-        #     ),]
 
         return [
             flanking0,
@@ -241,7 +228,7 @@ class RoundedCorner:
 
         return Cubic(curve_start, anchor_start, anchor_end, curve_end)
 
-    def _line_intersection(self, p0, d0, p1, d1) -> Optional[Point]:
+    def _line_intersection(self, p0, d0, p1, d1) -> Point | None:
         """Returns the intersection of two infinite lines."""
         rotated_d1 = d1.rotate_90()
         den = d0.dot_product(rotated_d1)

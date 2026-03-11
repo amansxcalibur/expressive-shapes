@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import List, Optional, Tuple
 
 from .bezier_geometry import Cubic
 from .rounded_polygon import Feature, RoundedPolygon
@@ -35,7 +34,7 @@ class LengthMeasurer:
         return LengthMeasurer._closest_progress_to(c, m)[0]
 
     @staticmethod
-    def _closest_progress_to(cubic: Cubic, threshold: float) -> Tuple[float, float]:
+    def _closest_progress_to(cubic: Cubic, threshold: float) -> tuple[float, float]:
         total = 0.0
         remainder = threshold
         prev = cubic.p0
@@ -56,7 +55,7 @@ class LengthMeasurer:
         return 1.0, total
 
 
-def measure_features(feature_list: List[Feature]):
+def measure_features(feature_list: list[Feature]):
     """
     Converts a list of Feature objects into measured data:
     - outline_progress: cumulative arc-length-normalized progress for each cubic boundary
@@ -116,8 +115,8 @@ class DoubleMapper:
     """
 
     def __init__(self, *mappings):
-        self.source = [m[0] for m in mappings] # progress positions of shape1
-        self.target = [m[1] for m in mappings] # progress positions of shape2
+        self.source = [m[0] for m in mappings]  # progress positions of shape1
+        self.target = [m[1] for m in mappings]  # progress positions of shape2
 
         self._validate_progress(self.source)
         self._validate_progress(self.target)
@@ -237,7 +236,7 @@ class MeasuredCubic:
 
     def cut_at_progress(
         self, cut_outline_progress: float
-    ) -> Tuple["MeasuredCubic", "MeasuredCubic"]:
+    ) -> tuple["MeasuredCubic", "MeasuredCubic"]:
         bounded_cut = max(
             self.start_outline_progress,
             min(cut_outline_progress, self.end_outline_progress),
@@ -272,12 +271,12 @@ class MeasuredCubic:
 
 
 class MeasuredPolygon:
-    def __init__(self, features: List[MeasuredFeature], cubics: List[MeasuredCubic]):
+    def __init__(self, features: list[MeasuredFeature], cubics: list[MeasuredCubic]):
         self._features = features
         self._cubics = cubics
 
     @property
-    def features(self) -> List[MeasuredFeature]:
+    def features(self) -> list[MeasuredFeature]:
         return self._features
 
     @property
@@ -290,7 +289,7 @@ class MeasuredPolygon:
     def __getitem__(self, index: int) -> MeasuredCubic:
         return self._cubics[index]
 
-    def get_cubic(self, index: int) -> Optional[MeasuredCubic]:
+    def get_cubic(self, index: int) -> MeasuredCubic | None:
         if 0 <= index < self.size:
             return self._cubics[index]
         return None
@@ -411,7 +410,7 @@ class MeasuredPolygon:
                 features.append(MeasuredFeature(prog, feature))
 
         # filter out empty cubics and chain start/end progress correctly
-        filtered_cubics: List[Cubic] = []
+        filtered_cubics: list[Cubic] = []
         start_progress = 0.0
         for i in range(len(cubics)):
             progress_size = outline_progress[i + 1] - outline_progress[i]

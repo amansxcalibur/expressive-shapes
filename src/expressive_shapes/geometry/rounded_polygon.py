@@ -1,7 +1,5 @@
 import math
-from pprint import pprint
 from dataclasses import dataclass
-from typing import List, Optional, Tuple
 
 from .bezier_geometry import Point, Cubic
 from .corner_rounding import CornerRounding, RoundedCorner
@@ -11,7 +9,7 @@ from .corner_rounding import CornerRounding, RoundedCorner
 class Feature:
     """Represents a segment of the polygon (either a Corner or an Edge)"""
 
-    curves: List[Cubic]
+    curves: list[Cubic]
     type: str  # "corner" or "edge"
     is_convex: bool = True
 
@@ -22,8 +20,9 @@ class Feature:
     def __eq__(self, other):
         return self is other
 
+
 class RoundedPolygon:
-    def __init__(self, features: List[Feature], center_x: float, center_y: float):
+    def __init__(self, features: list[Feature], center_x: float, center_y: float):
         self.features = features
         self.center_x = center_x
         self.center_y = center_y
@@ -31,11 +30,11 @@ class RoundedPolygon:
     @classmethod
     def create(
         cls,
-        vertices: List[float],
+        vertices: list[float],
         rounding: CornerRounding = CornerRounding.UNROUNDED(),
-        per_vertex_rounding: Optional[List[CornerRounding]] = None,
-        center_x: Optional[float] = None,
-        center_y: Optional[float] = None,
+        per_vertex_rounding: list[CornerRounding] | None = None,
+        center_x: float | None = None,
+        center_y: float | None = None,
     ) -> "RoundedPolygon":
 
         n_floats = len(vertices)
@@ -66,11 +65,6 @@ class RoundedPolygon:
                 clockwise_winding=is_cw,
             )
             rounded_corners.append(corner)
-
-        print("--- rounded corners ---")
-        for i in rounded_corners:
-            pprint([i.p0, i.p1, i.p2, i.rounding])
-        print()
 
         # --- Resolve overlapping cuts (tight-space adjustment) ---
         # For each edge, check whether the two flanking corners claim more
@@ -106,10 +100,6 @@ class RoundedPolygon:
                 cut_adjusts.append((1.0, smooth_ratio))
             else:
                 cut_adjusts.append((1.0, 1.0))
-
-        print("----- cut adjusts -----")
-        pprint(cut_adjusts)
-        print()
 
         # --- Generate Final Features ---
         # Generate a corner feature paired with a straight edge on each vertex
@@ -173,17 +163,13 @@ class RoundedPolygon:
             )
             features.append(Feature(curves=[edge_line], type="edge"))
 
-        print("----features-----")
-        pprint(features)
-        print()
-
         if center_x is None or center_y is None:
             center_x, center_y = cls._calculate_center(vertices)
 
         return cls(features, center_x, center_y)
 
     @staticmethod
-    def _is_clockwise(vertices: List[float]) -> bool:
+    def _is_clockwise(vertices: list[float]) -> bool:
         # uses Shoelace formula
         area = 0.0
         n = len(vertices) // 2
@@ -194,13 +180,13 @@ class RoundedPolygon:
         return area > 0
 
     @staticmethod
-    def _calculate_center(vertices: List[float]) -> Tuple[float, float]:
+    def _calculate_center(vertices: list[float]) -> tuple[float, float]:
         # arithmetic mean of all vertices
         n = len(vertices) // 2
         return (sum(vertices[0::2]) / n, sum(vertices[1::2]) / n)
 
-    def get_all_curves(self) -> List[Cubic]:
+    def get_all_curves(self) -> list[Cubic]:
         return [curve for f in self.features for curve in f.curves]
 
-    def get_all_features(self) -> List[Feature]:
+    def get_all_features(self) -> list[Feature]:
         return self.features
