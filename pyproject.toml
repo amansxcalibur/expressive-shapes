@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "expressive-shapes"
-version = "0.1.2"
+version = "0.1.0"
 authors = [
   { name="Aman Valiyakath", email="notifyamanvs@gmail.com" },
 ]
@@ -42,5 +42,5 @@ license-files = ["LICENSE"]
 [project.urls]
 Homepage = "https://github.com/amansxcalibur/expressive-shapes"
 Source = "https://github.com/amansxcalibur/expressive-shapes"
-Changelog = "https://github.com/amansxcalibur/expressive-shapes/blob/main/CHANGELOG.md"
 Issues = "https://github.com/amansxcalibur/expressive-shapes/issues"
+Changelog = "https://github.com/amansxcalibur/expressive-shapes/blob/main/CHANGELOG.md"
