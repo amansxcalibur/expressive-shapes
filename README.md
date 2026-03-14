@@ -9,11 +9,11 @@ A pure-Python library for creating, rounding, and morphing polygons using cubic 
 
 ## Features
 
-- **Rounded polygons** -- Create polygons with per-vertex corner rounding and smoothing, matching Material Design 3 specifications
-- **Shape morphing** -- Smoothly interpolate between any two shapes using feature-aware Bezier matching
-- **30+ built-in presets** -- Circle, star, heart, clover, ghost, pixel shapes, and more
-- **Renderer-agnostic** -- Outputs cubic Bezier curves; render with Cairo, SVG, Canvas, or any path-based renderer
-- **Zero dependencies** -- Pure Python, no external packages required
+- **Rounded polygons** - Create polygons with per-vertex corner rounding and smoothing, matching Material Design 3 specifications
+- **Shape morphing** - Smoothly interpolate between any two shapes using feature-aware Bezier matching
+- **30+ built-in presets** - Circle, star, heart, clover, ghost, pixel shapes, and more
+- **Renderer-agnostic** - Outputs cubic Bezier curves; render with Cairo, SVG, Canvas, or any path-based renderer
+- **Zero dependencies** - Pure Python, no external packages required
 
 ## Installation
 
@@ -22,6 +22,9 @@ pip install expressive-shapes
 ```
 
 ## Quick Start
+
+> [!NOTE]
+> See `/examples` for more implementation demos.
 
 ### Create a rounded polygon
 
@@ -129,7 +132,7 @@ surface.write_to_png("morph.png")
 
 The `shapes.shape_presets` module includes 30+ ready-to-use shapes defined in unit coordinates (0.0-1.0):
 
-`circle`, `square`, `triangle`, `diamond`, `pentagon`, `star`, `heart`, `arrow`, `shield`, `pill`, `arch`, `semicircle`, `oval`, `fan`, `gem`, `clamshell`, `cookie_8`, `cookie_12`, `four_leaf_clover`, `boom`, `ghost_ish`, `bun`, `pixel_circle`, `pixel_triangle`, `puffy_square`, `puffy_diamond`, `concave_rectangle`, `slanted`, and more.
+`circle`, `square`, `slanted`, `arch`, `semicircle`, `oval`, `pill`, `triangle`, `arrow`, `fan`, `diamond`, `clamshell`, `pentagon`, `star`, `gem`, `sunny`, `very_sunny`, `cookie_4`, `cookie_8`, `cookie_12`, `leaf_clover_4`, `leaf_clover_8`, `boom`, `puffy_diamond`, `flower`, `ghost_ish`, `pixel_circle`, `pixel_triangle`, `bun`, `heart`, `organic_blob`, `shield`, and more.
 
 Each preset is a list of `((x, y), CornerRounding)` tuples that can be scaled to any size.
 

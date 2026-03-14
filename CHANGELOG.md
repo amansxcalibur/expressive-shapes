@@ -3,9 +3,26 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.2.0] - 2026-03-14
+
+Improved preset shapes.
+
+### Changed
+
+- BREAKING: Migrated all shape_presets and CornerRounding constants to Normalized Unit Space (0.0 to 1.0).
+
+### Added
+
+- 11 New Presets: sunny, very_sunny, cookie_4, leaf_clover_4, leaf_clover_8, boom, puffy_diamond, flower, organic_blob, shield, fan_16_sided.
+- New Rounding Styles: SMALL_ROUND, SEMI_MEDIUM_ROUND, LARGE_ROUND, FULL_ROUND, and smoothed variants
+
+### Removed
+
+- four_leaf_clover (now leaf_clover_4), puffy_square, concave_rectangle
+
 ## [0.1.0] - 2026-03-12
 
-Initial release: expressive shapes and morphing for everyone.
+Initial release: expressive shapes and morphing for everyone!
 
 ### Added
 
@@ -19,4 +36,5 @@ Initial release: expressive shapes and morphing for everyone.
 - Cairo and GTK/Fabric rendering examples
 
 ### Infrastructure
+
 - GitHub Actions CI workflow for PyPI publishing
