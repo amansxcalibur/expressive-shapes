@@ -14,6 +14,7 @@ class Pill(Window):
             type_hint="normal",
             margin=(0, 0, 0, 0),
             visible=True,
+            size=(400,400),
             all_visible=True,
         )
         self.children = Box(

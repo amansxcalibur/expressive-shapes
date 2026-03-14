@@ -4,71 +4,61 @@ import threading
 from expressive_shapes.morph.bezier_morph import Morph
 from expressive_shapes.geometry.rounded_polygon import RoundedPolygon
 from expressive_shapes.shapes.shape_presets import (
-    star,
-    clover_flower,
-    organic_blob,
-    puffy_square,
-    pill,
-    shield,
-    concave_rectangle,
-    cookie_12,
-    cookie_8,
     fan,
-    apple,
-    t_apple,
-    t_fan,
+    gem,
+    bun,
+    pill,
+    star,
+    oval,
+    arch,
+    boom,
+    heart,
     arrow,
+    sunny,
+    flower,
+    shield,
     circle,
     square,
     slanted,
-    arch,
-    semicircle,
-    oval,
-    pill_tilted,
-    triangle,
     diamond,
-    clamshell,
+    triangle,
     pentagon,
-    gem,
-    very_sunny,
-    sunny,
-    four_leaf_clover,
-    puffy_diamond,
+    cookie_4,
+    cookie_8,
+    clamshell,
     ghost_ish,
-    pixel_triangle,
-    bun,
-    heart,
+    cookie_12,
+    very_sunny,
+    semicircle,
     pixel_circle,
-    boom,
+    organic_blob,
+    fan_16_sided,
+    leaf_clover_4,
+    leaf_clover_8,
     puffy_diamond,
+    pixel_triangle,
 )
 
 import gi
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk, GLib, Gdk
 
 
 class BezierShapeMorph(Gtk.DrawingArea):
     def __init__(self):
         super().__init__()
-        self.set_size_request(1000, 1000)
-
-        poly_start = self.create_rounded_polygon(diamond)
-        poly_end = self.create_rounded_polygon(fan)
-
-        print(" = = =  = =  this i what you wnat")
-        from pprint import pprint
-
-        pprint(poly_start)
-        pprint(poly_end)
-        print(" = = =  = =  this i what you wnat")
-
-        self.mappings = Morph.match(poly_start, poly_end)
+        self.set_hexpand(True)
+        self.set_vexpand(True)
 
         self.alpha = 0.0
         self.direction = 1
         self.step_once = False
+
+        poly_start = self.create_rounded_polygon(square)
+        poly_end = self.create_rounded_polygon(fan)
+
+        self.mappings = Morph.match(poly_start, poly_end)
 
         self.connect("draw", self.on_draw)
 
@@ -112,8 +102,7 @@ class BezierShapeMorph(Gtk.DrawingArea):
 
         side = min(width, height)
         ctx.translate((width - side) / 2, (height - side) / 2)
-
-        scale_factor = side / 500.0
+        scale_factor = side
         ctx.scale(scale_factor, scale_factor)
 
         curves = Morph.as_cubics(self.mappings, self.alpha)
@@ -123,11 +112,6 @@ class BezierShapeMorph(Gtk.DrawingArea):
 
         ctx.move_to(curves[0].p0.x, curves[0].p0.y)
 
-        # print(f"--- step {self.alpha} ---")
-        # import pprint
-        # pprint.pprint(curves)
-        # print()
-
         for c in curves:
             # ctx.curve_to(control1_x, control1_y, control2_x, control2_y, end_x, end_y)
             ctx.curve_to(c.p1.x, c.p1.y, c.p2.x, c.p2.y, c.p3.x, c.p3.y)
@@ -135,7 +119,7 @@ class BezierShapeMorph(Gtk.DrawingArea):
         ctx.close_path()
 
         ctx.set_source_rgb(0.4, 0.6, 0.9)
-        ctx.set_line_width(1)
+        ctx.set_line_width(1 / scale_factor)
         ctx.stroke_preserve()
 
         ctx.set_source_rgba(0.4, 0.6, 0.9, 0.0)
@@ -174,14 +158,11 @@ class BezierShapeMorph(Gtk.DrawingArea):
 
         return False
 
-    def create_rounded_polygon(self, unit_data, size=500, margin=0):
-        draw_area = size - (margin * 2)
+    def create_rounded_polygon(self, unit_data):
         verts = []
         per_vertex = []
         for (ux, uy), rounding_preset in unit_data:
-            sx = margin + (ux * draw_area)
-            sy = margin + (uy * draw_area)
-            verts.extend([sx, sy])
+            verts.extend([ux, uy])
             per_vertex.append(rounding_preset)
 
         return RoundedPolygon.create(vertices=verts, per_vertex_rounding=per_vertex)
@@ -190,7 +171,8 @@ class BezierShapeMorph(Gtk.DrawingArea):
 class AnimateShapeMorph(Gtk.DrawingArea):
     def __init__(self):
         super().__init__()
-        self.set_size_request(750, 750)
+        self.set_hexpand(True)
+        self.set_vexpand(True)
 
         self.presets = [
             circle,
@@ -202,21 +184,28 @@ class AnimateShapeMorph(Gtk.DrawingArea):
             pill,
             triangle,
             arrow,
+            fan,
             diamond,
             clamshell,
             pentagon,
             gem,
+            very_sunny,
+            sunny,
+            cookie_4,
             cookie_8,
-            shield,
-            four_leaf_clover,
+            cookie_12,
+            leaf_clover_4,
+            leaf_clover_8,
             boom,
             puffy_diamond,
-            concave_rectangle,
+            flower,
             ghost_ish,
             pixel_circle,
             pixel_triangle,
             bun,
             heart,
+            organic_blob,
+            shield,
         ]
         self.current_idx = 0
 
@@ -316,7 +305,7 @@ class AnimateShapeMorph(Gtk.DrawingArea):
 
         side = min(width, height)
         ctx.translate((width - side) / 2, (height - side) / 2)
-        scale_factor = side / 500.0
+        scale_factor = side
         ctx.scale(scale_factor, scale_factor)
 
         alpha = self.material_easing(self.progress)
@@ -340,14 +329,11 @@ class AnimateShapeMorph(Gtk.DrawingArea):
 
         return False
 
-    def create_rounded_polygon(self, unit_data, size=500, margin=50):
-        draw_area = size - (margin * 2)
+    def create_rounded_polygon(self, unit_data):
         verts = []
         per_vertex = []
         for (ux, uy), rounding_preset in unit_data:
-            sx = margin + (ux * draw_area)
-            sy = margin + (uy * draw_area)
-            verts.extend([sx, sy])
+            verts.extend([ux, uy])
             per_vertex.append(rounding_preset)
 
         return RoundedPolygon.create(vertices=verts, per_vertex_rounding=per_vertex)

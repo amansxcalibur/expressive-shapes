@@ -12,6 +12,7 @@ class Pill(Gtk.Window):
         self.set_position(Gtk.WindowPosition.CENTER)
         self.set_keep_above(True)
         self.set_type_hint(gi.repository.Gdk.WindowTypeHint.NORMAL)
+        self.set_size_request(400, 400)
 
         self.main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.main_box.set_hexpand(True)
